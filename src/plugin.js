@@ -1,6 +1,6 @@
 
-function showMessage(txt, timeout = 5){
-  NSApplication.sharedApplication().orderedDocuments().firstObject().displayMessage_timeout(txt, timeout)
+function showMessage(txt){
+  NSApplication.sharedApplication().orderedDocuments().firstObject().displayMessage(txt)
 }
 
 function runImageOptim(context, files, hidden) {
@@ -10,7 +10,7 @@ function runImageOptim(context, files, hidden) {
   const bundleIdentifier = "net.pornel.ImageOptim";
   const appURL = workspace.URLForApplicationWithBundleIdentifier(bundleIdentifier);
   if (!appURL) {
-    showMessage("ImageOptim not installed", 10);
+    showMessage("ImageOptim not installed");
     workspace.openURL(NSURL.URLWithString("https://imageoptim.com/mac?sketch"));
     return;
   }
