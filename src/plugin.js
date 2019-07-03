@@ -83,8 +83,11 @@ function exportAndCompress(context){
         }
         render.data().writeToFile_atomically(currentExport.path, true)
       }
+      // Filter out items that can't be optimized
+      const optimizableExports = filteredExports(exports);
       // …and then we'll be able to compress them :)
-      const urlsToCompress = getURLsToCompress(exports)
+
+      const urlsToCompress = getURLsToCompress(optimizableExports);
       if (urlsToCompress.length > 0) {
         runImageOptim(context, urlsToCompress, false);
       } else {
@@ -96,8 +99,27 @@ function exportAndCompress(context){
   }
 }
 
+function filteredExports(exports) {
+  var optimizableExports = NSMutableArray.new();
+
+  for (var i = 0; i < exports.count(); i++) {
+    if (!exports[i].request.format().isEqualToString("pdf")
+      && !exports[i].request.format().isEqualToString("webp")
+      && !exports[i].request.format().isEqualToString("eps")
+      && !exports[i].request.format().isEqualToString("svg")) {
+      optimizableExports.addObject(exports[i]);
+    }
+  }
+
+  return optimizableExports;
+}
+
 function compressAutomatically(context){
-  const urlsToCompress = getURLsToCompress(context.actionContext.exports)
+  const exports = context.actionContext.exports;
+  // Filter out items that can't be optimized
+  const optimizableExports = filteredExports(exports);
+
+  const urlsToCompress = getURLsToCompress(optimizableExports)
   runImageOptim(context, urlsToCompress, true)
 }
 
